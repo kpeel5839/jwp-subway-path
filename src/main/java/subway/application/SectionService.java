@@ -49,11 +49,9 @@ public class SectionService {
         final List<SectionEntity> sections = sectionDao.findByLineIdAndPreviousStationId(lineId, previousStationId);
 
         if (sections.isEmpty()) {
-            System.out.println("fuck you");
             return saveLastStation(lineId, previousStationId, additionalStationId, distance);
         }
 
-        System.out.println("fuck you");
         return saveBetweenStationWhenUpper(sections, lineId, previousStationId, additionalStationId, distance);
     }
 
@@ -64,11 +62,9 @@ public class SectionService {
         final List<SectionEntity> sections = sectionDao.findByLineIdAndNextStationId(lineId, nextStationId);
 
         if (sections.isEmpty()) {
-            System.out.println("fuck you");
             return saveLastStation(lineId, additionalStationId, nextStationId, distance);
         }
 
-        System.out.println("fuck you");
         return saveBetweenStationWhenDown(sections, lineId, additionalStationId, nextStationId, distance);
     }
 
