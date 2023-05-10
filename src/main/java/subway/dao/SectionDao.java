@@ -51,8 +51,19 @@ public class SectionDao {
         return jdbcTemplate.query(sql, sectionEntityRowMapper, lineId, previousStationId);
     }
 
+    public List<SectionEntity> findByLineIdAndNextStationId(final Long lineId, final Long nextStationId) {
+        final String sql = "SELECT * FROM section WHERE line_id = ? AND next_station_id = ?";
+
+        return jdbcTemplate.query(sql, sectionEntityRowMapper, lineId, nextStationId);
+    }
+
     public void delete(final SectionEntity sectionEntity) {
         final String sql = "DELETE FROM section WHERE id = ?";
         jdbcTemplate.update(sql, sectionEntity.getId());
+    }
+
+    public List<SectionEntity> findByLineIdAndPreviousStationIdOrNextStationId(Long lineId, Long stationId) {
+        final String sql = "SELECT * FROM section WHERE line_id = ? AND previous_station_id = ? OR next_station_id = ?";
+        return jdbcTemplate.query(sql, sectionEntityRowMapper, lineId, stationId, stationId);
     }
 }
