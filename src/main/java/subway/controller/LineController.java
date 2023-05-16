@@ -1,23 +1,18 @@
 package subway.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import subway.controller.dto.response.LineTempResponse;
+import subway.controller.dto.request.LineRequest;
+import subway.controller.dto.response.LineResponse;
 import subway.service.LineService;
-import subway.controller.dto.response.SingleLineDetailResponse;
 import subway.service.dto.LineDto;
 import subway.service.dto.SectionCreateDto;
-import subway.controller.dto.request.LineRequest;
 
+import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/lines")
@@ -30,7 +25,7 @@ public class LineController {
     }
 
     @PostMapping
-    public ResponseEntity<LineTempResponse> createLine(@RequestBody LineRequest request) {
+    public ResponseEntity<LineResponse> createLine(@RequestBody @Valid LineRequest request) {
         final LineDto lineDto = new LineDto(
                 request.getName(),
                 request.getColor()
@@ -40,9 +35,9 @@ public class LineController {
                 request.getFirstStation(),
                 request.getSecondStation()
         );
-        final LineTempResponse lineTempResponse = lineService.save(lineDto, sectionCreateDto);
-        return ResponseEntity.created(URI.create("/lines/" + lineTempResponse.getId()))
-                .body(lineTempResponse);
+        final LineResponse lineResponse = lineService.save(lineDto, sectionCreateDto);
+        return ResponseEntity.created(URI.create("/lines/" + lineResponse.getId()))
+                .body(lineResponse);
     }
 
 //    @GetMapping

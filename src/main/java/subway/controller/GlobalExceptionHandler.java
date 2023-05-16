@@ -10,16 +10,16 @@ import java.sql.SQLException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionDto> handle(IllegalArgumentException e) {
-        return ResponseEntity.badRequest()
-                .body(new ExceptionDto(e.getMessage()));
-    }
-
-    @ExceptionHandler(SQLException.class)
-    public ResponseEntity<Void> handleSQLException() {
-        return ResponseEntity.badRequest()
-                .build();
-    }
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public ResponseEntity<ExceptionDto> handle(IllegalArgumentException e) {
+//        return ResponseEntity.badRequest()
+//                .body(new ExceptionDto(e.getMessage()));
+//    }
+//
+//    @ExceptionHandler(SQLException.class)
+//    public ResponseEntity<Void> handleSQLException() {
+//        return ResponseEntity.badRequest()
+//                .build();
+//    }
 
 }

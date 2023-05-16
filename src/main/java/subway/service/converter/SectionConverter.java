@@ -1,15 +1,5 @@
 package subway.service.converter;
 
-import subway.service.domain.Distance;
-import subway.service.domain.Line;
-import subway.service.domain.Section;
-import subway.service.domain.Station;
-import subway.dao.rowmapper.SectionDetail;
-import subway.controller.dto.response.SectionResponse;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class SectionConverter {
 
 //    public static List<SectionResponse> domainToResponseDtos(final List<Section> sections) {

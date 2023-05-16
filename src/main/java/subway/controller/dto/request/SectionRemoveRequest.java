@@ -1,4 +1,4 @@
-package subway.ui.dto.request;
+package subway.controller.dto.request;
 
 public class SectionRemoveRequest {
 

@@ -25,6 +25,19 @@ public class Section {
         this.distance = distance;
     }
 
+    public boolean isContainsStation(Station station) {
+        return previousStation.equals(station)
+                || nextStation.equals(station);
+    }
+
+    public boolean isPreviousStationThisStation(Station station) {
+        return previousStation.equals(station);
+    }
+
+    public boolean isNextStationThisStation(Station station) {
+        return nextStation.equals(station);
+    }
+
     public long getId() {
         return id;
     }

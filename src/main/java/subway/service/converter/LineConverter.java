@@ -4,7 +4,7 @@ import subway.service.domain.Line;
 import subway.service.domain.LineProperty;
 import subway.service.dto.LineDto;
 import subway.entity.LineEntity;
-import subway.controller.dto.response.LineResponse;
+import subway.controller.dto.response.LinePropertyResponse;
 
 import java.util.ArrayList;
 
@@ -14,8 +14,8 @@ public class LineConverter {
         return new LineEntity(lineDto.getName(), lineDto.getColor());
     }
 
-    public static LineResponse domainToResponseDto(final Line line) {
-        return new LineResponse(
+    public static LinePropertyResponse domainToResponseDto(final Line line) {
+        return new LinePropertyResponse(
                 line.getLineProperty().getId(),
                 line.getLineProperty().getName(),
                 line.getLineProperty().getColor()

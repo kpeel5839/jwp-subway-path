@@ -19,7 +19,6 @@ public class Distance {
     }
 
     private static void validateDistance(int value) {
-
         if (value <= LOWER_BOUND_INTEGER_INCLUSIVE) {
             throw new IllegalArgumentException("거리는 정수만 가능합니다.");
         }

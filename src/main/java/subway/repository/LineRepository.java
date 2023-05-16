@@ -31,13 +31,20 @@ public class LineRepository {
         this.stationDao = stationDao;
     }
 
-    public Line save(Line line) {
+    public Line save(Line line) { // TODO : 과연 이렇게 유동적으로 Line 을 저장하고 저장하지 않아도 되는지 궁금하다, 일단 그냥 Line 을 저장해도 된다는 점에서는 굉장히 편함
+        List<LineEntity> lineEntities = lineDao.findByName(line.getLineProperty().getName());
+
+        if (!lineEntities.isEmpty()) {
+            LineEntity lineEntity = lineEntities.get(0);
+            LineProperty lineProperty = new LineProperty(lineEntity.getId(), lineEntity.getName(), lineEntity.getColor());
+            return new Line(lineProperty, saveSections(lineProperty, line.getSections()));
+        }
+
         LineProperty lineProperty = saveLineProperty(line.getLineProperty());
-        List<Section> sections = saveSections(lineProperty, line.getSections());
-        return new Line(lineProperty, sections);
+        return new Line(lineProperty, saveSections(lineProperty, line.getSections()));
     }
 
-    public LineProperty saveLineProperty(LineProperty lineProperty) { // 그냥 Line 만 생성할 수도 있잖아?
+    public LineProperty saveLineProperty(LineProperty lineProperty) {
         LineEntity lineEntity = new LineEntity(lineProperty.getName(), lineProperty.getColor());
         Long id = lineDao.insert(lineEntity);
         return new LineProperty(id, lineProperty.getName(), lineProperty.getColor());
@@ -73,11 +80,21 @@ public class LineRepository {
         return lineDao.findByName(name).size() != 0;
     }
 
-    public Line findById(Long id) {
+    public Line findById(Long id) { // 이것도 역시임
         List<LineEntity> lines = lineDao.findById(id);
 
         if (lines.isEmpty()) {
             throw new LineNotFoundException("해당 노선은 존재하지 않습니다.");
+        }
+
+        return toLine(lines.get(0));
+    }
+
+    public Line findByName(String name) { // findByName 해도 관련된 것을 가져와야지
+        List<LineEntity> lines = lineDao.findByName(name);
+
+        if (lines.isEmpty()) {
+            throw new LineNotFoundException(name + "노선은 존재하지 않습니다.");
         }
 
         return toLine(lines.get(0));

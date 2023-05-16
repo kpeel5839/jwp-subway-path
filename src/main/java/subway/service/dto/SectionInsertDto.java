@@ -39,4 +39,15 @@ public class SectionInsertDto {
         return distance;
     }
 
+    @Override
+    public String toString() {
+        return "SectionInsertDto{" +
+                "lineName='" + lineName + '\'' +
+                ", direction=" + direction +
+                ", standardStationName='" + standardStationName + '\'' +
+                ", additionalStationName='" + additionalStationName + '\'' +
+                ", distance=" + distance +
+                '}';
+    }
+
 }
