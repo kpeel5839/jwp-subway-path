@@ -3,6 +3,7 @@ package subway.repository;
 import org.springframework.stereotype.Repository;
 import subway.dao.StationDao;
 import subway.entity.StationEntity;
+import subway.exception.StationNotFoundException;
 import subway.service.domain.Station;
 
 import java.util.List;
@@ -24,12 +25,26 @@ public class StationRepository {
     }
 
     public Station findById(Long id) {
-        StationEntity stationEntity = stationDao.findById(id);
+        List<StationEntity> stationEntities = stationDao.findById(id);
+
+        if (stationEntities.size() == 0) {
+            throw new StationNotFoundException("해당 역은 존재하지 않습니다.");
+        }
+
+        StationEntity stationEntity = stationEntities.get(0);
+
         return new Station(stationEntity.getId(), stationEntity.getName());
     }
 
     public Station findByName(String name) {
-        StationEntity stationEntity = stationDao.findByName(name);
+        List<StationEntity> stationEntities = stationDao.findByName(name);
+
+        if (stationEntities.size() == 0) {
+            throw new StationNotFoundException(name + "역은 존재하지 않습니다.");
+        }
+
+        StationEntity stationEntity = stationEntities.get(0);
+
         return new Station(stationEntity.getId(), stationEntity.getName());
     }
 

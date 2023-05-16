@@ -2,10 +2,14 @@ package subway.service.domain;
 
 public class LineProperty {
 
-    private final Long id;
+    private Long id;
     private final String name;
     private final String color;
 
+    public LineProperty(String name, String color) {
+        this.name = name;
+        this.color = color;
+    }
 
     public LineProperty(Long id, String name, String color) {
         this.id = id;

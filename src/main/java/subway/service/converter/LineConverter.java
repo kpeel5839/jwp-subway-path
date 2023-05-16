@@ -1,9 +1,12 @@
 package subway.service.converter;
 
 import subway.service.domain.Line;
+import subway.service.domain.LineProperty;
 import subway.service.dto.LineDto;
 import subway.entity.LineEntity;
 import subway.controller.dto.response.LineResponse;
+
+import java.util.ArrayList;
 
 public class LineConverter {
 
@@ -12,11 +15,21 @@ public class LineConverter {
     }
 
     public static LineResponse domainToResponseDto(final Line line) {
-        return new LineResponse(line.getId(), line.getName(), line.getColor());
+        return new LineResponse(
+                line.getLineProperty().getId(),
+                line.getLineProperty().getName(),
+                line.getLineProperty().getColor()
+        );
     }
 
     public static Line entityToDomain(LineEntity lineEntity) {
-        return new Line(lineEntity.getId(), lineEntity.getName(), lineEntity.getColor());
+        return new Line(
+                new LineProperty(
+                        lineEntity.getId(),
+                        lineEntity.getName(),
+                        lineEntity.getColor()
+                ),
+                new ArrayList<>());
     }
 
 }

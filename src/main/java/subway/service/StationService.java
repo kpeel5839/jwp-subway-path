@@ -2,10 +2,8 @@ package subway.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subway.dao.StationDao;
 import subway.controller.dto.request.StationRequest;
 import subway.controller.dto.response.StationResponse;
-import subway.entity.StationEntity;
 import subway.repository.StationRepository;
 import subway.service.domain.Station;
 
@@ -25,19 +23,19 @@ public class StationService {
     public StationResponse saveStation(StationRequest stationRequest) {
         Station station = new Station(stationRequest.getName()); // Domain 생성
         Station stationResponse = stationRepository.save(station);
-        return StationResponse.of(stationResponse);
+        return StationResponse.from(stationResponse);
     }
 
     public StationResponse findStationResponseById(Long id) {
         Station station = stationRepository.findById(id);
-        return StationResponse.of(station);
+        return StationResponse.from(station);
     }
 
     public List<StationResponse> findAllStationResponses() {
         List<Station> stationEntities = stationRepository.findAll();
 
         return stationEntities.stream()
-                .map(StationResponse::of)
+                .map(StationResponse::from)
                 .collect(Collectors.toList());
     }
 

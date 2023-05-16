@@ -1,11 +1,29 @@
 package subway.controller.dto.request;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
 public class LineRequest {
 
+    @NotNull
+    @NotEmpty
+    @NotBlank
     private final String name;
+    @NotNull
+    @NotEmpty
+    @NotBlank
     private final String color;
+    @Positive
     private final Integer distance;
+    @NotNull
+    @NotEmpty
+    @NotBlank
     private final String firstStation;
+    @NotNull
+    @NotEmpty
+    @NotBlank
     private final String secondStation;
 
     public LineRequest(final String name, final String color, final Integer distance,

@@ -20,8 +20,8 @@ public class LineDto {
         return color;
     }
 
-    public Line toDomain() {
-        return new Line(name, color);
-    }
+//    public Line toDomain() {
+//        return new Line(name, color);
+//    }
 
 }

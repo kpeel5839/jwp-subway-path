@@ -56,7 +56,6 @@ public class LineRepository {
                 section.getPreviousStation().getId(),
                 section.getNextStation().getId()
         );
-
         Long id = sectionDao.insert(sectionEntity);
         return new Section(
                 id,
@@ -67,28 +66,31 @@ public class LineRepository {
     }
 
     public boolean existsById(Long id) {
-        List<LineEntity> lines = lineDao.findById(id);
-        return lines.size() != 0;
+        return lineDao.findById(id).size() != 0;
+    }
+
+    public boolean existsByName(String name) {
+        return lineDao.findByName(name).size() != 0;
     }
 
     public Line findById(Long id) {
         List<LineEntity> lines = lineDao.findById(id);
 
         if (lines.isEmpty()) {
-            throw new LineNotFoundException("해당 노선은 존재하지 않습니다."); // 아니지 이런 것들은 findByName 같은 것을 할 떄에만 진행하고, id 로 접근하게 되면 상관이 없을 것 같다.
+            throw new LineNotFoundException("해당 노선은 존재하지 않습니다.");
         }
 
-        return getLine(lines.get(0));
+        return toLine(lines.get(0));
     }
 
     public List<Line> findAll() {
         List<LineEntity> lineEntities = lineDao.findAll();
         return lineEntities.stream()
-                .map(this::getLine)
+                .map(this::toLine)
                 .collect(Collectors.toList());
     }
 
-    private Line getLine(LineEntity lineEntity) {
+    private Line toLine(LineEntity lineEntity) {
         LineProperty lineProperty = new LineProperty(
                 lineEntity.getId(),
                 lineEntity.getName(),

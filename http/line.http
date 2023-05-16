@@ -1,0 +1,45 @@
+### Request (노선 생성 API)
+
+POST http://localhost:8080/lines
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name" : "6호선",
+  "color" : "bg-red-600",
+  "distance" : 100,
+  "firstStation" : "온수",
+  "secondStation" : "대림"
+}
+
+### Response (노선 생성 API)
+
+HTTP/1.1 201
+Location: /lines/6
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Tue, 16 May 2023 08:35:40 GMT
+Keep-Alive: timeout=60
+Connection: keep-alive
+
+{
+  "id": 6,
+  "name": "6호선",
+  "color": "bg-red-600",
+  "sections": [
+    {
+      "id": 17,
+      "distance": 100,
+      "previousStation": {
+        "id": 4,
+        "name": "온수"
+      },
+      "nextStation": {
+        "id": 10,
+        "name": "대림"
+      }
+    }
+  ]
+}
+
+
