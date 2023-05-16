@@ -21,6 +21,33 @@ public class LineEntity {
         this.color = color;
     }
 
+    public static class Builder {
+
+        private Long id;
+        private String name;
+        private String color;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder color(String color) {
+            this.color = color;
+            return this;
+        }
+
+        public LineEntity build() {
+            return new LineEntity(id, name, color);
+        }
+
+    }
+
     public Long getId() {
         return id;
     }

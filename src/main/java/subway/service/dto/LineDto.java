@@ -1,5 +1,7 @@
 package subway.service.dto;
 
+import subway.service.domain.Line;
+
 public class LineDto {
 
     private final String name;
@@ -16,6 +18,10 @@ public class LineDto {
 
     public String getColor() {
         return color;
+    }
+
+    public Line toDomain() {
+        return new Line(name, color);
     }
 
 }

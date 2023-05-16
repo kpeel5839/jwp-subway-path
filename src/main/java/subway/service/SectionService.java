@@ -2,6 +2,7 @@ package subway.service;
 
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
+import subway.service.domain.Distance;
 import subway.service.domain.Section;
 import subway.service.dto.SectionInsertDto;
 import subway.dao.LineDao;
@@ -142,7 +143,7 @@ public class SectionService {
                 entityToDomain(lineEntity),
                 entityToDomain(previousStationEntity),
                 entityToDomain(nextStationEntity),
-                distance
+                Distance.from(distance)
         );
     }
 

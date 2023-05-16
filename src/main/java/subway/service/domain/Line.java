@@ -1,11 +1,13 @@
 package subway.service.domain;
 
+import java.util.List;
+
 public class Line {
 
-    // TODO: id 빼는거 고려
     private final long id;
     private final String name;
     private final String color;
+    private List<Section> sections;
 
     public Line(final long id, final String name, final String color) {
         this.id = id;
@@ -23,6 +25,10 @@ public class Line {
 
     public String getColor() {
         return color;
+    }
+
+    public List<Section> getSections() {
+        return sections;
     }
 
     @Override

@@ -2,7 +2,12 @@ package subway.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subway.controller.dto.response.LineResponse;
+import subway.repository.LineRepository;
+import subway.repository.StationRepository;
 import subway.service.converter.SectionConverter;
+import subway.service.domain.Distance;
+import subway.service.domain.Line;
 import subway.service.domain.Section;
 import subway.service.domain.Station;
 import subway.service.domain.Stations;
@@ -33,28 +38,31 @@ import java.util.stream.Collectors;
 @Service
 public class LineService {
 
-    private final LineDao lineDao;
-    private final StationDao stationDao;
-    private final SectionDao sectionDao;
+    private final LineRepository lineRepository;
+    private final StationRepository stationRepository;
 
-    public LineService(final LineDao lineDao, final StationDao stationDao, final SectionDao sectionDao) {
-        this.lineDao = lineDao;
-        this.stationDao = stationDao;
-        this.sectionDao = sectionDao;
+    public LineService(LineRepository lineRepository, StationRepository stationRepository) {
+        this.lineRepository = lineRepository;
+        this.stationRepository = stationRepository;
     }
 
     @Transactional
-    public long save(final LineDto lineDto, final SectionCreateDto sectionCreateDto) {
-        final Long lineId = lineDao.insert(LineConverter.toEntity(lineDto));
-        final StationEntity previousStation = stationDao.findByName(sectionCreateDto.getPreviousStation());
-        final StationEntity nextStation = stationDao.findByName(sectionCreateDto.getNextStation());
-        sectionDao.insert(new SectionEntity.Builder()
-                .lineId(lineId)
-                .distance(sectionCreateDto.getDistance())
-                .previousStationId(previousStation.getId())
-                .nextStationId(nextStation.getId())
-                .build());
-        return lineId;
+    public LineResponse save(final LineDto lineDto, final SectionCreateDto sectionCreateDto) { // 결국 Line 에서 Section 을 만들어주는 역할을 진행해야함.
+        // 일단 Line 과 함께 Section 이 저장되어야 한다는 사실은 어떻게 보면 뻔하다.
+        // 그러면 Section 을 저장할 때 Line 도 같이 넣어야하는 것일까?
+        // lineRepository 가 존재하는 이유는 그것일 뿐일 수도 있다.
+        // 그러면 Section 에 Station 으로 바꿔주는 역할을 LineRepository 의 역할일까?
+        // 일단 Domain 을 만드는 행위를 구성해보자.
+        Station previousStation = stationRepository.findByName(sectionCreateDto.getPreviousStation());
+        Station nextStation = stationRepository.findByName(sectionCreateDto.getNextStation());
+        Section section = new Section(
+                lineDto.toDomain(),
+                previousStation,
+                nextStation,
+                Distance.from(sectionCreateDto.getDistance())
+        );
+
+        return lineRepository.save(section);
     }
 
     public List<SingleLineDetailResponse> getAllLine() {

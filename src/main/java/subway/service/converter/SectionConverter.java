@@ -1,5 +1,6 @@
 package subway.service.converter;
 
+import subway.service.domain.Distance;
 import subway.service.domain.Line;
 import subway.service.domain.Section;
 import subway.service.domain.Station;
@@ -38,7 +39,7 @@ public class SectionConverter {
                 new Line(sectionDetail.getLineId(), sectionDetail.getLineName(), sectionDetail.getLineColor()),
                 new Station(sectionDetail.getPreviousStationId(), sectionDetail.getPreviousStationName()),
                 new Station(sectionDetail.getNextStationId(), sectionDetail.getNextStationName()),
-                sectionDetail.getDistance()
+                Distance.from(sectionDetail.getDistance())
         );
     }
 

@@ -58,13 +58,13 @@ public class StationDao {
         return result.get(0);
     }
 
-    public void update(StationEntity newStationEntity) {
+    public int update(StationEntity newStationEntity) {
         String sql = "update STATION set name = ? where id = ?";
-        jdbcTemplate.update(sql, new Object[]{newStationEntity.getName(), newStationEntity.getId()});
+        return jdbcTemplate.update(sql, new Object[]{newStationEntity.getName(), newStationEntity.getId()});
     }
 
-    public void deleteById(Long id) {
+    public int deleteById(Long id) {
         String sql = "delete from STATION where id = ?";
-        jdbcTemplate.update(sql, id);
+        return jdbcTemplate.update(sql, id);
     }
 }
