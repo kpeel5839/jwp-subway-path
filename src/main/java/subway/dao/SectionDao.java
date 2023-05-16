@@ -28,17 +28,9 @@ public class SectionDao {
     }
 
     // TODO: 없는 호선이나 역을 입력한 경우 예외 처리 해야함
-    public SectionEntity insert(final SectionEntity sectionEntity) {
+    public Long insert(final SectionEntity sectionEntity) { // 근데 그 경우는 이미 Line 에서 진행이 될 것임
         final SqlParameterSource params = new BeanPropertySqlParameterSource(sectionEntity);
-        Long id = simpleJdbcInsert.executeAndReturnKey(params).longValue();
-
-        return new SectionEntity.Builder()
-                .id(id)
-                .lineId(sectionEntity.getLineId())
-                .previousStationId(sectionEntity.getPreviousStationId())
-                .nextStationId(sectionEntity.getNextStationId())
-                .distance(sectionEntity.getDistance())
-                .build();
+        return simpleJdbcInsert.executeAndReturnKey(params).longValue();
     }
 
     public List<SectionEntity> findByLineIdAndPreviousStationId(final Long lineId, final Long previousStationId) {
@@ -60,11 +52,11 @@ public class SectionDao {
         return jdbcTemplate.query(sql, sectionEntityRowMapper, lineId);
     }
 
-    public List<SectionEntity> findAll() {
-        final String sql = "SELECT * FROM section";
-
-        return jdbcTemplate.query(sql, sectionEntityRowMapper);
-    }
+//    public List<SectionEntity> findAll() {
+//        final String sql = "SELECT * FROM section";
+//
+//        return jdbcTemplate.query(sql, sectionEntityRowMapper);
+//    }
 
     public void delete(final SectionEntity sectionEntity) {
         final String sql = "DELETE FROM section WHERE id = ?";
@@ -87,42 +79,41 @@ public class SectionDao {
             throw new RuntimeException("간선의 정보가 잘못되었습니다.");
         }
     }
-
-    public List<StationEntity> findStationByLineId(final long lineId) {
-        final String sql = "SELECT DISTINCT station.id, station.name " +
-                "FROM section JOIN station " +
-                "ON section.previous_station_id = station.id " +
-                "OR section.next_station_id = station.id " +
-                "WHERE section.line_id = ?";
-
-        return jdbcTemplate.query(sql, stationEntityRowMapper, lineId);
-    }
-
-    public List<SectionDetail> findSectionDetailByLineId(final long lineId) {
-        final String sql = "SELECT se.id, se.distance, se.line_id, " +
-                "line.name line_name, line.color line_color, " +
-                "pst.id previous_station_id, pst.name previous_station_name, " +
-                "nst.id next_station_id, nst.name next_station_name " +
-                "FROM section se " +
-                "JOIN station pst ON se.previous_station_id = pst.id " +
-                "JOIN station nst ON se.next_station_id = nst.id " +
-                "JOIN line " +
-                "WHERE se.line_id = ?";
-
-        return jdbcTemplate.query(sql, sectionDetailRowMapper, lineId);
-    }
-
-    public List<SectionDetail> findSectionDetail() {
-        final String sql = "SELECT se.id, se.distance, se.line_id, " +
-                "line.name line_name, line.color line_color, " +
-                "pst.id previous_station_id, pst.name previous_station_name, " +
-                "nst.id next_station_id, nst.name next_station_name " +
-                "FROM section se " +
-                "JOIN station pst ON se.previous_station_id = pst.id " +
-                "JOIN station nst ON se.next_station_id = nst.id " +
-                "JOIN line " +
-                "WHERE line.id = se.line_id";
-
-        return jdbcTemplate.query(sql, sectionDetailRowMapper);
-    }
+//    public List<StationEntity> findStationByLineId(final long lineId) {
+//        final String sql = "SELECT DISTINCT station.id, station.name " +
+//                "FROM section JOIN station " +
+//                "ON section.previous_station_id = station.id " +
+//                "OR section.next_station_id = station.id " +
+//                "WHERE section.line_id = ?";
+//
+//        return jdbcTemplate.query(sql, stationEntityRowMapper, lineId);
+//    }
+//
+//    public List<SectionDetail> findSectionDetailByLineId(final long lineId) {
+//        final String sql = "SELECT se.id, se.distance, se.line_id, " +
+//                "line.name line_name, line.color line_color, " +
+//                "pst.id previous_station_id, pst.name previous_station_name, " +
+//                "nst.id next_station_id, nst.name next_station_name " +
+//                "FROM section se " +
+//                "JOIN station pst ON se.previous_station_id = pst.id " +
+//                "JOIN station nst ON se.next_station_id = nst.id " +
+//                "JOIN line " +
+//                "WHERE se.line_id = ?";
+//
+//        return jdbcTemplate.query(sql, sectionDetailRowMapper, lineId);
+//    }
+//
+//    public List<SectionDetail> findSectionDetail() {
+//        final String sql = "SELECT se.id, se.distance, se.line_id, " +
+//                "line.name line_name, line.color line_color, " +
+//                "pst.id previous_station_id, pst.name previous_station_name, " +
+//                "nst.id next_station_id, nst.name next_station_name " +
+//                "FROM section se " +
+//                "JOIN station pst ON se.previous_station_id = pst.id " +
+//                "JOIN station nst ON se.next_station_id = nst.id " +
+//                "JOIN line " +
+//                "WHERE line.id = se.line_id";
+//
+//        return jdbcTemplate.query(sql, sectionDetailRowMapper);
+//    }
 }

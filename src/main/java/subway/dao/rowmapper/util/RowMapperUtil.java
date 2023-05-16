@@ -8,6 +8,9 @@ import subway.entity.StationEntity;
 
 public class RowMapperUtil {
 
+    private RowMapperUtil() {
+    }
+
     public static final RowMapper<StationEntity> stationEntityRowMapper = (rs, rn) -> new StationEntity(
             rs.getLong("id"),
             rs.getString("name")

@@ -41,21 +41,14 @@ public class StationDao {
         return jdbcTemplate.query(sql, rowMapper);
     }
 
-    public StationEntity findById(Long id) {
+    public List<StationEntity> findById(Long id) {
         String sql = "select * from STATION where id = ?";
-        return jdbcTemplate.queryForObject(sql, rowMapper, id);
+        return jdbcTemplate.query(sql, rowMapper, id);
     }
 
-    public StationEntity findByName(final String name) {
+    public List<StationEntity> findByName(final String name) {
         String sql = "SELECT * FROM station WHERE name = ?";
-
-        List<StationEntity> result = jdbcTemplate.query(sql, rowMapper, name);
-
-        if (result.isEmpty()) {
-            throw new StationNotFoundException("존재하지 않는 역 이름입니다.");
-        }
-
-        return result.get(0);
+        return jdbcTemplate.query(sql, rowMapper, name);
     }
 
     public int update(StationEntity newStationEntity) {
