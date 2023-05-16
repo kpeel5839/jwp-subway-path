@@ -1,8 +1,11 @@
 package subway.service;
 
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
 import subway.controller.dto.response.LineResponse;
+import subway.entity.SectionEntity;
 import subway.repository.LineRepository;
+import subway.repository.SectionRepository;
 import subway.repository.StationRepository;
 import subway.service.domain.Direction;
 import subway.service.domain.Distance;
@@ -20,10 +23,12 @@ public class SectionService {
 
     private final LineRepository lineRepository;
     private final StationRepository stationRepository;
+    private final SectionRepository sectionRepository;
 
-    public SectionService(LineRepository lineRepository, StationRepository stationRepository) {
+    public SectionService(LineRepository lineRepository, StationRepository stationRepository, SectionRepository sectionRepository) {
         this.lineRepository = lineRepository;
         this.stationRepository = stationRepository;
+        this.sectionRepository = sectionRepository;
     }
 
     public LineResponse save(final SectionInsertDto sectionInsertDto) {
@@ -31,7 +36,7 @@ public class SectionService {
         final Station standardStation = stationRepository.findByName(sectionInsertDto.getStandardStationName());
         final Station additionalStation = stationRepository.findByName(sectionInsertDto.getAdditionalStationName());
 
-        Optional<Section> deleteSection = line.getDeleteSection(
+        Optional<Section> deleteSection = line.getSectionByDirectionAndStation(
                 sectionInsertDto.getDirection(),
                 standardStation,
                 additionalStation
@@ -110,6 +115,23 @@ public class SectionService {
         }
 
         return new Section(additionalStation, standardStation, Distance.from(sectionInsertDto.getDistance()));
+    }
+
+    public void remove(final Long lineId, final Long stationId) {
+        Line line = lineRepository.findById(lineId);
+        Station station = stationRepository.findById(stationId);
+        List<Section> sections = line.getSectionByStation(station);
+
+        if (sections.isEmpty()) {
+            throw new IllegalArgumentException("해당 노선에서 해당 역을 찾을 수 없습니다.");
+        }
+
+        if (sections.size() == 2) {
+            Section section = line.deleteSectionAndNewSection(sections, station);
+            lineRepository.save(new Line(line.getLineProperty(), section));
+        }
+
+        sections.forEach(section -> sectionRepository.deleteById(section.getId()));
     }
 
 }

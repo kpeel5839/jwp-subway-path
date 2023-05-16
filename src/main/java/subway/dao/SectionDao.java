@@ -63,6 +63,11 @@ public class SectionDao {
         jdbcTemplate.update(sql, sectionEntity.getId());
     }
 
+    public int deleteById(Long id) {
+        final String sql = "DELETE FROM section WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
     public List<SectionEntity> findByLineIdAndPreviousStationIdOrNextStationId(final Long lineId, final Long stationId) {
         final String sql = "SELECT * FROM section WHERE line_id = ? AND previous_station_id = ? OR next_station_id = ?";
         List<SectionEntity> result = jdbcTemplate.query(sql, sectionEntityRowMapper, lineId, stationId, stationId);

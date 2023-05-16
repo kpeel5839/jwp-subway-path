@@ -3,6 +3,7 @@ package subway.service.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Line {
 
@@ -72,9 +73,15 @@ public class Line {
 //        }
 //    }
 
-    public Optional<Section> getDeleteSection(Direction direction,
-                                              Station standardStation,
-                                              Station additionalStation) {
+    public List<Section> getSectionByStation(Station station) {
+        return sections.stream()
+                .filter(section -> section.isContainsStation(station))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<Section> getSectionByDirectionAndStation(Direction direction,
+                                                             Station standardStation,
+                                                             Station additionalStation) {
         validateSection(standardStation, additionalStation);
 
         if (Direction.UP == direction) {
@@ -117,4 +124,19 @@ public class Line {
         return sections;
     }
 
+    public Section deleteSectionAndNewSection(List<Section> sections, Station station) {
+        Section nextSection = sections.stream()
+                .filter(section -> section.isPreviousStationThisStation(station))
+                .findFirst()
+                .get();
+        Section previousSection = sections.stream()
+                .filter(section -> section.isNextStationThisStation(station))
+                .findFirst()
+                .get();
+
+        return new Section(
+                previousSection.getPreviousStation(),
+                nextSection.getNextStation(),
+                Distance.from(nextSection.getDistance() + previousSection.getDistance()));
+    }
 }
