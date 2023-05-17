@@ -35,52 +35,26 @@ public class Line {
         return sections.findNextStationThisStation(additionalStation);
     }
 
-    public void validateSection(Station firstStation, Station secondStation) {
+    private void validateSection(Station firstStation, Station secondStation) {
         if (allContainsTwoStation(firstStation, secondStation)
                 || noContainsTwoStation(firstStation, secondStation)) {
             throw new IllegalArgumentException("이미 포함하고 있는 간선 정보입니다.");
         }
     }
 
-    public boolean allContainsTwoStation(Station firstStation, Station secondStation) {
+    private boolean allContainsTwoStation(Station firstStation, Station secondStation) {
         return sections.isContainsThisStation(firstStation)
                 && sections.isContainsThisStation(secondStation);
     }
 
 
-    public boolean noContainsTwoStation(Station firstStation, Station secondStation) {
+    private boolean noContainsTwoStation(Station firstStation, Station secondStation) {
         return !sections.isContainsThisStation(firstStation)
                 && !sections.isContainsThisStation(secondStation);
     }
 
     public RouteMap getLineMap() {
-        Map<Station, List<Path>> lineMap = new HashMap<>();
-
-        for (Section section : sections.getSections()) {
-            putIfNotContains(lineMap, section);
-            lineMap.get(section.getPreviousStation()).add(createPath(Direction.UP, section));
-            lineMap.get(section.getNextStation()).add(createPath(Direction.DOWN, section));
-        }
-
-        return new RouteMap(lineMap);
-    }
-
-    private Path createPath(Direction direction, Section section) {
-        return new Path(
-                direction,
-                section.getPreviousStation(),
-                Distance.from(section.getDistance())
-        );
-    }
-
-    private void putIfNotContains(Map<Station, List<Path>> lineMap, Section section) {
-        if (!lineMap.containsKey(section.getPreviousStation())) {
-            lineMap.put(section.getPreviousStation(), new ArrayList<>());
-        }
-
-        if (!lineMap.containsKey(section.getNextStation())) {
-            lineMap.put(section.getNextStation(), new ArrayList<>());
-        }
+        return sections.createMap();
     }
 
     public LineProperty getLineProperty() {
