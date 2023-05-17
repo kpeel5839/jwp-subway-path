@@ -2,6 +2,9 @@ package subway.repository;
 
 import org.springframework.stereotype.Repository;
 import subway.dao.SectionDao;
+import subway.entity.SectionEntity;
+import subway.service.domain.Distance;
+import subway.service.domain.Section;
 
 @Repository
 public class SectionRepository {
@@ -10,6 +13,30 @@ public class SectionRepository {
 
     public SectionRepository(SectionDao sectionDao) {
         this.sectionDao = sectionDao;
+    }
+
+    public Section save(Long lineId, Section section) {
+        SectionEntity sectionEntity = domainToEntity(lineId, section);
+        Long sectionId = sectionDao.insert(sectionEntity);
+        return entityToDomain(sectionId, section);
+    }
+
+    private SectionEntity domainToEntity(Long lineId, Section section) {
+        return new SectionEntity(
+                lineId,
+                section.getDistance(),
+                section.getPreviousStation().getId(),
+                section.getNextStation().getId()
+        );
+    }
+
+    private Section entityToDomain(Long id, Section section) {
+        return new Section(
+                id,
+                section.getPreviousStation(),
+                section.getNextStation(),
+                Distance.from(section.getDistance())
+        );
     }
 
     public void deleteById(long id) {

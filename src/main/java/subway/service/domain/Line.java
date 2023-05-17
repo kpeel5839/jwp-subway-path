@@ -137,6 +137,7 @@ public class Line {
         return new Section(
                 previousSection.getPreviousStation(),
                 nextSection.getNextStation(),
-                Distance.from(nextSection.getDistance() + previousSection.getDistance()));
+                Distance.from(nextSection.getDistance() + previousSection.getDistance())
+        );
     }
 }

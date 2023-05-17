@@ -36,7 +36,8 @@ public class SectionController {
                         request.getDistance())
         );
 
-        return ResponseEntity.created(URI.create("/sections")).body(lineResponse);
+        return ResponseEntity.created(URI.create("/lines/" + lineResponse.getId()))
+                .body(lineResponse);
     }
 
     @DeleteMapping
