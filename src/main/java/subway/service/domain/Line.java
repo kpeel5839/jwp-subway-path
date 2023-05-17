@@ -32,7 +32,7 @@ public class Line {
             return sections.findPreviousStationThisStation(standardStation);
         }
 
-        return sections.findNextStationThisStation(additionalStation);
+        return sections.findNextStationThisStation(standardStation);
     }
 
     private void validateSection(Station firstStation, Station secondStation) {
