@@ -53,31 +53,34 @@ public class Line {
                 && !sections.isContainsThisStation(secondStation);
     }
 
-    public Map<Station, List<Path>> getLineMap() {
+    public RouteMap getLineMap() {
         Map<Station, List<Path>> lineMap = new HashMap<>();
 
         for (Section section : sections.getSections()) {
-            if (!lineMap.containsKey(section.getPreviousStation())) {
-                lineMap.put(section.getPreviousStation(), new ArrayList<>());
-            }
-
-            if (!lineMap.containsKey(section.getNextStation())) {
-                lineMap.put(section.getNextStation(), new ArrayList<>());
-            }
-
-            lineMap.get(section.getPreviousStation())
-                    .add(new Path(
-                            Direction.UP,
-                            section.getNextStation(),
-                            Distance.from(section.getDistance())));
-            lineMap.get(section.getNextStation())
-                    .add(new Path(
-                            Direction.DOWN,
-                            section.getPreviousStation(),
-                            Distance.from(section.getDistance())));
+            putIfNotContains(lineMap, section);
+            lineMap.get(section.getPreviousStation()).add(createPath(Direction.UP, section));
+            lineMap.get(section.getNextStation()).add(createPath(Direction.DOWN, section));
         }
 
-        return lineMap;
+        return new RouteMap(lineMap);
+    }
+
+    private Path createPath(Direction direction, Section section) {
+        return new Path(
+                direction,
+                section.getPreviousStation(),
+                Distance.from(section.getDistance())
+        );
+    }
+
+    private void putIfNotContains(Map<Station, List<Path>> lineMap, Section section) {
+        if (!lineMap.containsKey(section.getPreviousStation())) {
+            lineMap.put(section.getPreviousStation(), new ArrayList<>());
+        }
+
+        if (!lineMap.containsKey(section.getNextStation())) {
+            lineMap.put(section.getNextStation(), new ArrayList<>());
+        }
     }
 
     public LineProperty getLineProperty() {

@@ -27,7 +27,7 @@ public class StationRepository {
     public Station findById(Long id) {
         List<StationEntity> stationEntities = stationDao.findById(id);
 
-        if (stationEntities.size() == 0) {
+        if (stationEntities.isEmpty()) {
             throw new StationNotFoundException("해당 역은 존재하지 않습니다.");
         }
 
@@ -39,7 +39,7 @@ public class StationRepository {
     public Station findByName(String name) {
         List<StationEntity> stationEntities = stationDao.findByName(name);
 
-        if (stationEntities.size() == 0) {
+        if (stationEntities.isEmpty()) {
             throw new StationNotFoundException(name + "역은 존재하지 않습니다.");
         }
 

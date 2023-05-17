@@ -14,7 +14,6 @@ public class Distance {
 
     public static Distance from(int value) {
         validateDistance(value);
-
         return new Distance(value);
     }
 

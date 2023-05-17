@@ -1,0 +1,76 @@
+package subway.service.domain;
+
+import subway.service.domain.vo.Direction;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
+public class RouteMap {
+
+    private final Map<Station, List<Path>> map;
+
+    public RouteMap(Map<Station, List<Path>> map) {
+        this.map = map;
+    }
+
+    public List<Station> getSingleLine() {
+        return map.entrySet()
+                .stream()
+                .findFirst()
+                .map(stationEntry -> createSingleLine(stationEntry.getKey()))
+                .orElseGet(Collections::emptyList);
+    }
+
+    private List<Station> createSingleLine(Station startStation) {
+        Set<Station> visitedStation = new HashSet<>();
+        Queue<Station> nowStations = new LinkedList<>();
+        Deque<Station> singleLine = new LinkedList<>();
+        initForCreateSingleLine(startStation, visitedStation, nowStations, singleLine);
+        searchLine(visitedStation, nowStations, singleLine);
+        return new ArrayList<>(singleLine);
+    }
+
+    private void searchLine(Set<Station> visitedStation, Queue<Station> queue, Deque<Station> singleLine) {
+        while (!queue.isEmpty()) {
+            Station nowStation = queue.poll();
+            map.get(nowStation)
+                    .forEach(
+                            path -> selectNextStation(visitedStation, queue, singleLine, path)
+                    );
+        }
+    }
+
+    private void selectNextStation(Set<Station> visitedStation, Queue<Station> queue, Deque<Station> singleLine, Path path) {
+        if (visitedStation.contains(path.getNextStation())) {
+            return;
+        }
+
+        if (Direction.UP == path.getDirection()) {
+            singleLine.addLast(path.getNextStation());
+        }
+
+        if (Direction.DOWN == path.getDirection()) {
+            singleLine.addFirst(path.getNextStation());
+        }
+
+        visitedStation.add(path.getNextStation());
+        queue.add(path.getNextStation());
+    }
+
+    private void initForCreateSingleLine(Station startStation,
+                                         Set<Station> visitedStation,
+                                         Queue<Station> queue,
+                                         Deque<Station> singleLine) {
+        queue.add(startStation);
+        visitedStation.add(startStation);
+        singleLine.add(startStation);
+    }
+
+}
