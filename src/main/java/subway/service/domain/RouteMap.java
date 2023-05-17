@@ -51,15 +51,16 @@ public class RouteMap {
         if (visitedStation.contains(path.getNextStation())) {
             return;
         }
-
         if (Direction.UP == path.getDirection()) {
             singleLine.addLast(path.getNextStation());
         }
-
         if (Direction.DOWN == path.getDirection()) {
             singleLine.addFirst(path.getNextStation());
         }
+        addNextStation(visitedStation, queue, path);
+    }
 
+    private void addNextStation(Set<Station> visitedStation, Queue<Station> queue, Path path) {
         visitedStation.add(path.getNextStation());
         queue.add(path.getNextStation());
     }
