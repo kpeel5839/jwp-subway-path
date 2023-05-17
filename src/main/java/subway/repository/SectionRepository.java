@@ -3,7 +3,7 @@ package subway.repository;
 import org.springframework.stereotype.Repository;
 import subway.dao.SectionDao;
 import subway.entity.SectionEntity;
-import subway.service.domain.Distance;
+import subway.service.domain.vo.Distance;
 import subway.service.domain.Section;
 
 @Repository

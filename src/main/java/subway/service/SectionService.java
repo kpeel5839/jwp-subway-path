@@ -5,8 +5,9 @@ import subway.controller.dto.response.LineResponse;
 import subway.repository.LineRepository;
 import subway.repository.SectionRepository;
 import subway.repository.StationRepository;
-import subway.service.domain.Direction;
-import subway.service.domain.Distance;
+import subway.service.domain.Sections;
+import subway.service.domain.vo.Direction;
+import subway.service.domain.vo.Distance;
 import subway.service.domain.Line;
 import subway.service.domain.Section;
 import subway.service.domain.Station;
@@ -35,18 +36,25 @@ public class SectionService {
         final Line line = lineRepository.findByName(sectionInsertDto.getLineName());
         final Station standardStation = stationRepository.findByName(sectionInsertDto.getStandardStationName());
         final Station additionalStation = stationRepository.findByName(sectionInsertDto.getAdditionalStationName());
+        Optional<Section> sectionByDirectionAndStation = getSectionByDirectionAndStation(sectionInsertDto, line, standardStation, additionalStation);
 
-        Optional<Section> sectionByDirectionAndStation = line.getSectionByDirectionAndStation(
+        return sectionByDirectionAndStation
+                .map(section -> saveSectionByDirection(sectionInsertDto, line, additionalStation, section))
+                .orElseGet(() -> saveSectionWhenLastStation(sectionInsertDto, line, standardStation, additionalStation));
+    }
+
+    private Optional<Section> getSectionByDirectionAndStation(SectionInsertDto sectionInsertDto,
+                                                              Line line,
+                                                              Station standardStation,
+                                                              Station additionalStation) {
+        Optional<Section> sectionByDirectionAndStation = line.findSectionByDirectionAndStation(
                 sectionInsertDto.getDirection(),
                 standardStation,
                 additionalStation
         );
 
         deleteSection(sectionByDirectionAndStation);
-
-        return sectionByDirectionAndStation
-                .map(section -> saveSectionByDirection(sectionInsertDto, line, additionalStation, section))
-                .orElseGet(() -> saveSectionWhenLastStation(sectionInsertDto, line, standardStation, additionalStation));
+        return sectionByDirectionAndStation;
     }
 
     private void deleteSection(Optional<Section> deleteSection) {
@@ -63,21 +71,18 @@ public class SectionService {
         return saveSectionWhenDown(sectionInsertDto, line, additionalStation, section);
     }
 
-    private LineResponse saveSectionWhenUpper(SectionInsertDto sectionInsertDto, Line line, Station additionalStation, Section section) {
-        List<Section> sectionsWhenUpper = getSectionsWhenUpper(sectionInsertDto, additionalStation, section);
+    private LineResponse saveSectionWhenUpper(SectionInsertDto sectionInsertDto,
+                                              Line line,
+                                              Station additionalStation,
+                                              Section section) {
+        List<Section> sections = getSectionsWhenUpper(sectionInsertDto, additionalStation, section);
 
         Line saveLine = new Line(
                 line.getLineProperty(),
-                saveSections(line.getLineProperty().getId(), sectionsWhenUpper)
+                new Sections(saveSections(line.getLineProperty().getId(), sections))
         );
 
         return LineResponse.from(saveLine);
-    }
-
-    private List<Section> saveSections(Long lineId, List<Section> sections) {
-        return sections.stream()
-                .map(section -> sectionRepository.save(lineId, section))
-                .collect(Collectors.toList());
     }
 
     private List<Section> getSectionsWhenUpper(SectionInsertDto sectionInsertDto,
@@ -97,14 +102,20 @@ public class SectionService {
     }
 
     private LineResponse saveSectionWhenDown(SectionInsertDto sectionInsertDto, Line line, Station additionalStation, Section section) {
-        List<Section> sectionsWhenDown = getSectionsWhenDown(sectionInsertDto, additionalStation, section);
+        List<Section> sections = getSectionsWhenDown(sectionInsertDto, additionalStation, section);
 
         Line saveLine = new Line(
                 line.getLineProperty(),
-                saveSections(line.getLineProperty().getId(), sectionsWhenDown)
+                new Sections(saveSections(line.getLineProperty().getId(), sections))
         );
 
         return LineResponse.from(saveLine);
+    }
+
+    private List<Section> saveSections(Long lineId, List<Section> sections) {
+        return sections.stream()
+                .map(section -> sectionRepository.save(lineId, section))
+                .collect(Collectors.toList());
     }
 
     private List<Section> getSectionsWhenDown(SectionInsertDto sectionInsertDto,
@@ -126,9 +137,10 @@ public class SectionService {
     private LineResponse saveSectionWhenLastStation(SectionInsertDto sectionInsertDto, Line line, Station standardStation, Station additionalStation) {
         Line saveLine = new Line(
                 line.getLineProperty(),
-                createSectionByDirection(sectionInsertDto, standardStation, additionalStation)
+                new Sections(List.of(createSectionByDirection(sectionInsertDto, standardStation, additionalStation)))
         );
-        Line afterSaveLine = lineRepository.save(saveLine);
+
+        Line afterSaveLine = lineRepository.saveLine(saveLine);
         return LineResponse.from(afterSaveLine);
     }
 
@@ -143,7 +155,7 @@ public class SectionService {
     public void remove(final Long lineId, final Long stationId) {
         Line line = lineRepository.findById(lineId);
         Station station = stationRepository.findById(stationId);
-        List<Section> sections = line.getSectionByStation(station);
+        List<Section> sections = line.findSectionByStation(station);
         saveNewSection(lineId, station, sections);
         sections.forEach(section -> sectionRepository.deleteById(section.getId()));
     }

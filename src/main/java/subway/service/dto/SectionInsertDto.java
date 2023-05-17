@@ -1,6 +1,6 @@
 package subway.service.dto;
 
-import subway.service.domain.Direction;
+import subway.service.domain.vo.Direction;
 
 public class SectionInsertDto {
 

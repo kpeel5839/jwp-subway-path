@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import subway.controller.dto.request.SectionRequest;
 import subway.controller.dto.response.LineResponse;
 import subway.service.SectionService;
-import subway.service.domain.Direction;
+import subway.service.domain.vo.Direction;
 import subway.service.dto.SectionInsertDto;
 
 import java.net.URI;

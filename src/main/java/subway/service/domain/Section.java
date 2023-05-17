@@ -1,5 +1,7 @@
 package subway.service.domain;
 
+import subway.service.domain.vo.Distance;
+
 public class Section {
 
     private long id;

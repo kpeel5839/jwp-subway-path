@@ -1,4 +1,4 @@
-package subway.service.domain;
+package subway.service.domain.vo;
 
 import java.util.Arrays;
 

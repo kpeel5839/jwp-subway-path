@@ -5,17 +5,21 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import subway.entity.LineEntity;
-import subway.exception.LineNotFoundException;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static subway.dao.rowmapper.util.RowMapperUtil.lineEntityRowMapper;
-
 @Repository
 public class LineDao {
+
+    public static final RowMapper<LineEntity> lineEntityRowMapper = (rs, rowNum) -> new LineEntity(
+            rs.getLong("id"),
+            rs.getString("name"),
+            rs.getString("color")
+    );
+
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert insertAction;
 
@@ -50,12 +54,12 @@ public class LineDao {
         return lineEntities;
     }
 
-    public void update(LineEntity newLine) {
+    public int update(LineEntity newLine) {
         String sql = "update LINE set name = ?, color = ? where id = ?";
-        jdbcTemplate.update(sql, new Object[]{newLine.getName(), newLine.getColor(), newLine.getId()});
+        return jdbcTemplate.update(sql, new Object[]{newLine.getName(), newLine.getColor(), newLine.getId()});
     }
 
-    public void deleteById(Long id) {
-        jdbcTemplate.update("delete from Line where id = ?", id);
+    public int deleteById(Long id) {
+        return jdbcTemplate.update("delete from Line where id = ?", id);
     }
 }

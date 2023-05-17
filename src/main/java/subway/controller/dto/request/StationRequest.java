@@ -1,6 +1,14 @@
 package subway.controller.dto.request;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 public class StationRequest {
+
+    @NotEmpty
+    @NotBlank
+    @NotNull
     private String name;
 
     public StationRequest() {

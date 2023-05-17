@@ -21,7 +21,7 @@ public class StationService {
     }
 
     public StationResponse saveStation(StationRequest stationRequest) {
-        Station station = new Station(stationRequest.getName()); // Domain 생성
+        Station station = new Station(stationRequest.getName());
         Station stationResponse = stationRepository.save(station);
         return StationResponse.from(stationResponse);
     }
@@ -43,15 +43,15 @@ public class StationService {
         int updateCount = stationRepository.update(new Station(id, stationRequest.getName()));
 
         if (updateCount == 0) {
-            throw new IllegalArgumentException("Station 이 수정되지 않았습니다.");
-        } // 일관성을 유지하기 위해 이름을 출력하지 않음
+            throw new IllegalArgumentException("역이 수정되지 않았습니다.");
+        }
     }
 
-    public void deleteStationById(Long id) { // 이 경우 조금 애매함
+    public void deleteStationById(Long id) {
         int removeCount = stationRepository.deleteById(id);
 
         if (removeCount == 0) {
-            throw new IllegalArgumentException("Station 이 삭제되지 않았습니다.");
+            throw new IllegalArgumentException("역이 삭제되지 않았습니다.");
         }
     }
 

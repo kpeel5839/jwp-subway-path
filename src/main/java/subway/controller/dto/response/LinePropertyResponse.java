@@ -1,12 +1,12 @@
 package subway.controller.dto.response;
 
-import subway.entity.LineEntity;
+import subway.service.domain.LineProperty;
 
 public class LinePropertyResponse {
 
-    private Long id;
-    private String name;
-    private String color;
+    private final Long id;
+    private final String name;
+    private final String color;
 
     public LinePropertyResponse(Long id, String name, String color) {
         this.id = id;
@@ -14,7 +14,7 @@ public class LinePropertyResponse {
         this.color = color;
     }
 
-    public static LinePropertyResponse of(LineEntity line) {
+    public static LinePropertyResponse from(LineProperty line) {
         return new LinePropertyResponse(line.getId(), line.getName(), line.getColor());
     }
 

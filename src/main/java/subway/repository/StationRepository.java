@@ -48,7 +48,7 @@ public class StationRepository {
         return new Station(stationEntity.getId(), stationEntity.getName());
     }
 
-    public List<Station> findAll() { // Entity -> Station 의 역할을 어디가 맡아놓으면 좋을텐데. 그것이 Converter 의 역할일까?
+    public List<Station> findAll() {
         List<StationEntity> stationEntities = stationDao.findAll();
 
         return stationEntities.stream()
@@ -56,7 +56,7 @@ public class StationRepository {
                 .collect(Collectors.toList());
     }
 
-    public int update(Station station) { // 이것은 없는 ID? 굳이 Domain 을 넘겨줄 필요가 있을까? update 가 안됐는데? 절대 없음
+    public int update(Station station) {
         StationEntity stationEntity = new StationEntity(station.getId(), station.getName());
         return stationDao.update(stationEntity);
     }

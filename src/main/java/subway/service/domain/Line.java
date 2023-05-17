@@ -1,98 +1,38 @@
 package subway.service.domain;
 
+import subway.service.domain.vo.Direction;
+import subway.service.domain.vo.Distance;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class Line {
 
     private final LineProperty lineProperty;
-    private final List<Section> sections;
+    private final Sections sections;
 
-    public Line(LineProperty lineProperty, Section section) {
-        this.lineProperty = lineProperty;
-        sections = new ArrayList<>(List.of(section));
-    }
-
-    public Line(LineProperty lineProperty, List<Section> sections) {
+    public Line(LineProperty lineProperty, Sections sections) {
         this.lineProperty = lineProperty;
         this.sections = sections;
     }
 
-//    public void validateSection(Direction direction, Station standardStation, Station additionalStation) {
-//        List<Section> collect = getConnectSectionWithStation(standardStation, additionalStation);
-//
-//        if (direction == Direction.UP) {
-//            collect.stream()
-//                    .filter(section -> section.getPreviousStation().equals(standardStation))
-//                    .findFirst()
-//                    .ifPresent(section -> upperValidate(section.getNextStation(), additionalStation));
-//        }
-//
-//        collect.stream()
-//                .filter(section -> section.getNextStation().equals(standardStation))
-//                .findFirst()
-//                .ifPresent(section -> downValidate(section.getPreviousStation(), additionalStation));
-//    }
-//
-//    private List<Section> getConnectSectionWithStation(Station standardStation, Station additionalStation) {
-//        List<Section> sectionsByStandardStation = sections.stream()
-//                .filter(section -> section.isContainsStation(standardStation))
-//                .collect(Collectors.toList());
-//
-//        if (isContainsAdditionalStation(additionalStation, sectionsByStandardStation)) {
-//            throw new IllegalArgumentException(INVALID_SECTION_ERROR_MESSAGE);
-//        }
-//
-//        return sectionsByStandardStation;
-//    }
-//
-//    private boolean isContainsAdditionalStation(Station additionalStation, List<Section> sectionsByStandardStation) {
-//        return sectionsByStandardStation.stream()
-//                .anyMatch(section -> section.isContainsStation(additionalStation));
-//    }
-//
-//    private void upperValidate(Station station, Station additionalStation) {
-//        sections.stream()
-//                .filter(section -> section.isPreviousStationThisStation(station))
-//                .findFirst()
-//                .ifPresent(section -> validDuplicate(section.getNextStation(), additionalStation));
-//    }
-//
-//    private void downValidate(Station station, Station additionalStation) {
-//        sections.stream()
-//                .filter(section -> section.isNextStationThisStation(station))
-//                .findFirst()
-//                .ifPresent(section -> validDuplicate(section.getPreviousStation(), additionalStation));
-//    }
-//
-//    private void validDuplicate(Station station, Station additionalStation) {
-//        if (station.equals(additionalStation)) {
-//            throw new IllegalArgumentException(INVALID_SECTION_ERROR_MESSAGE);
-//        }
-//    }
-
-    public List<Section> getSectionByStation(Station station) {
-        return sections.stream()
-                .filter(section -> section.isContainsStation(station))
-                .collect(Collectors.toList());
+    public List<Section> findSectionByStation(Station station) {
+        return sections.findContainsThisStation(station);
     }
 
-    public Optional<Section> getSectionByDirectionAndStation(Direction direction,
-                                                             Station standardStation,
-                                                             Station additionalStation) {
+    public Optional<Section> findSectionByDirectionAndStation(Direction direction,
+                                                              Station standardStation,
+                                                              Station additionalStation) {
         validateSection(standardStation, additionalStation);
 
         if (Direction.UP == direction) {
-            return sections.stream()
-                    .filter(section -> section.isPreviousStationThisStation(standardStation))
-                    .findFirst();
+            return sections.findPreviousStationThisStation(standardStation);
         }
 
-        return sections.stream()
-                .filter(section -> section.isNextStationThisStation(standardStation))
-                .findFirst();
+        return sections.findNextStationThisStation(additionalStation);
     }
 
     public void validateSection(Station firstStation, Station secondStation) {
@@ -103,17 +43,41 @@ public class Line {
     }
 
     public boolean allContainsTwoStation(Station firstStation, Station secondStation) {
-        return containsStation(firstStation) && containsStation(secondStation);
+        return sections.isContainsThisStation(firstStation)
+                && sections.isContainsThisStation(secondStation);
     }
 
 
     public boolean noContainsTwoStation(Station firstStation, Station secondStation) {
-        return !containsStation(firstStation) && containsStation(secondStation);
+        return !sections.isContainsThisStation(firstStation)
+                && !sections.isContainsThisStation(secondStation);
     }
 
-    private boolean containsStation(Station station) {
-        return sections.stream()
-                .anyMatch(section -> section.isContainsStation(station));
+    public Map<Station, List<Path>> getLineMap() {
+        Map<Station, List<Path>> lineMap = new HashMap<>();
+
+        for (Section section : sections.getSections()) {
+            if (!lineMap.containsKey(section.getPreviousStation())) {
+                lineMap.put(section.getPreviousStation(), new ArrayList<>());
+            }
+
+            if (!lineMap.containsKey(section.getNextStation())) {
+                lineMap.put(section.getNextStation(), new ArrayList<>());
+            }
+
+            lineMap.get(section.getPreviousStation())
+                    .add(new Path(
+                            Direction.UP,
+                            section.getNextStation(),
+                            Distance.from(section.getDistance())));
+            lineMap.get(section.getNextStation())
+                    .add(new Path(
+                            Direction.DOWN,
+                            section.getPreviousStation(),
+                            Distance.from(section.getDistance())));
+        }
+
+        return lineMap;
     }
 
     public LineProperty getLineProperty() {
@@ -121,23 +85,7 @@ public class Line {
     }
 
     public List<Section> getSections() {
-        return sections;
+        return sections.getSections();
     }
 
-    public Section deleteSectionAndNewSection(List<Section> sections, Station station) {
-        Section nextSection = sections.stream()
-                .filter(section -> section.isPreviousStationThisStation(station))
-                .findFirst()
-                .get();
-        Section previousSection = sections.stream()
-                .filter(section -> section.isNextStationThisStation(station))
-                .findFirst()
-                .get();
-
-        return new Section(
-                previousSection.getPreviousStation(),
-                nextSection.getNextStation(),
-                Distance.from(nextSection.getDistance() + previousSection.getDistance())
-        );
-    }
 }

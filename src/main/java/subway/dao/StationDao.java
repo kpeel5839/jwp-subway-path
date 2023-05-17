@@ -7,21 +7,19 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import subway.entity.StationEntity;
-import subway.exception.StationNotFoundException;
 
 import javax.sql.DataSource;
 import java.util.List;
 
 @Repository
 public class StationDao {
+
+    public static final RowMapper<StationEntity> stationEntityRowMapper = (rs, rn) -> new StationEntity(
+            rs.getLong("id"),
+            rs.getString("name")
+    );
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert insertAction;
-
-    private RowMapper<StationEntity> rowMapper = (rs, rowNum) ->
-            new StationEntity(
-                    rs.getLong("id"),
-                    rs.getString("name")
-            );
 
     public StationDao(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -38,17 +36,17 @@ public class StationDao {
 
     public List<StationEntity> findAll() {
         String sql = "select * from STATION";
-        return jdbcTemplate.query(sql, rowMapper);
+        return jdbcTemplate.query(sql, stationEntityRowMapper);
     }
 
     public List<StationEntity> findById(Long id) {
         String sql = "select * from STATION where id = ?";
-        return jdbcTemplate.query(sql, rowMapper, id);
+        return jdbcTemplate.query(sql, stationEntityRowMapper, id);
     }
 
     public List<StationEntity> findByName(final String name) {
         String sql = "SELECT * FROM station WHERE name = ?";
-        return jdbcTemplate.query(sql, rowMapper, name);
+        return jdbcTemplate.query(sql, stationEntityRowMapper, name);
     }
 
     public int update(StationEntity newStationEntity) {
@@ -60,4 +58,5 @@ public class StationDao {
         String sql = "delete from STATION where id = ?";
         return jdbcTemplate.update(sql, id);
     }
+
 }

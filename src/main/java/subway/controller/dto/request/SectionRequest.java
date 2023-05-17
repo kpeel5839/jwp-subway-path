@@ -1,11 +1,29 @@
 package subway.controller.dto.request;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
 public class SectionRequest {
 
+    @NotBlank
+    @NotEmpty
+    @NotNull
     private final String lineName;
+    @NotBlank
+    @NotEmpty
+    @NotNull
     private final String direction;
+    @NotBlank
+    @NotEmpty
+    @NotNull
     private final String standardStationName;
+    @NotBlank
+    @NotEmpty
+    @NotNull
     private final String additionalStationName;
+    @Positive
     private final Integer distance;
 
     public SectionRequest(final String lineName, final String direction, final String standardStationName,
