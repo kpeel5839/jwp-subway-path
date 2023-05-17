@@ -62,7 +62,7 @@ public class LineService {
                 .collect(Collectors.toList());
     }
 
-    public SingleLineResponse getLineById(Long id) { // TODO : 이거는 일단, 현재 Subway 를 만들때 findById 를 하는게 나을 듯, Subway 에서는 무조건 있다고 가정하고 들어가야할까
+    public SingleLineResponse getLineById(Long id) {
         Subway subway = new Subway(lineRepository.findAll());
 
         return SingleLineResponse.from(subway.getSingleLine(id));

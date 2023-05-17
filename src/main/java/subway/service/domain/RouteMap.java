@@ -37,17 +37,19 @@ public class RouteMap {
         return new ArrayList<>(singleLine);
     }
 
-    private void searchLine(Set<Station> visitedStation, Queue<Station> queue, Deque<Station> singleLine) {
-        while (!queue.isEmpty()) {
-            Station nowStation = queue.poll();
-            map.get(nowStation)
-                    .forEach(
-                            path -> selectNextStation(visitedStation, queue, singleLine, path)
-                    );
+    private void searchLine(Set<Station> visitedStation,
+                            Queue<Station> nowStations,
+                            Deque<Station> singleLine) {
+        while (!nowStations.isEmpty()) {
+            Station nowStation = nowStations.poll();
+            map.get(nowStation).forEach(path -> selectNextStation(visitedStation, nowStations, singleLine, path));
         }
     }
 
-    private void selectNextStation(Set<Station> visitedStation, Queue<Station> queue, Deque<Station> singleLine, Path path) {
+    private void selectNextStation(Set<Station> visitedStation,
+                                   Queue<Station> nowStations,
+                                   Deque<Station> singleLine,
+                                   Path path) {
         if (visitedStation.contains(path.getNextStation())) {
             return;
         }
@@ -57,10 +59,12 @@ public class RouteMap {
         if (Direction.DOWN == path.getDirection()) {
             singleLine.addFirst(path.getNextStation());
         }
-        addNextStation(visitedStation, queue, path);
+        addNextStation(visitedStation, nowStations, path);
     }
 
-    private void addNextStation(Set<Station> visitedStation, Queue<Station> queue, Path path) {
+    private void addNextStation(Set<Station> visitedStation,
+                                Queue<Station> queue,
+                                Path path) {
         visitedStation.add(path.getNextStation());
         queue.add(path.getNextStation());
     }
