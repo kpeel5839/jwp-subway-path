@@ -1,14 +1,20 @@
 package subway.service.domain;
 
+import org.springframework.beans.factory.ListableBeanFactoryExtensionsKt;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 public class RouteMap {
 
@@ -20,6 +26,64 @@ public class RouteMap {
 
     public Map<Station, List<Path>> getMap() {
         return map;
+    }
+
+    public void merge(RouteMap insertMap) {
+        map.putAll(insertMap.getMap());
+    }
+
+    public void bfs(Station start, Station end) {
+        PriorityQueue<Object[]> q = new PriorityQueue<>(Comparator.comparingInt(o -> (Integer) o[1]));
+        Map<Station, Object[]> m = new HashMap<>();
+        q.add(new Object[] {start, 0});
+        m.put(start, new Object[] {null, 0});
+
+        while (!q.isEmpty()) {
+            Object[] poll = q.poll();
+
+            if (((Station) poll[0]).equals(end)) {
+                break;
+            }
+
+            if ((Integer) m.get(poll[0])[1] < (Integer) poll[1]) {
+                continue;
+            }
+
+            for (Path path : map.get(poll[0])) {
+                Object[] objects = m.get(path.getNextStation());
+
+                if ((Integer) poll[1] + path.getDistance() < (Integer) objects[1]) {
+                    q.add(new Object[] {path.getNextStation(), (Integer) poll[1] + path.getDistance()});
+                    m.put(path.getNextStation(), new Object[] {poll[0], (Integer) poll[1] + path.getDistance()});
+                }
+            }
+        }
+
+        List<Station> stations = pathReverse(end, start, m);
+        System.out.println(m.get(end)[1]);
+        System.out.println(stations);
+    }
+
+    public List<Station> pathReverse(Station start, Station end, Map<Station, Object[]> m) {
+        Stack<Station> stack = new Stack<>();
+        List<Station> result = new ArrayList<>();
+        Station c = start;
+
+        while (true) {
+            stack.add(c);
+
+            if (c.equals(end)) {
+                break;
+            }
+
+            c = (Station) m.get(c)[0];
+        }
+
+        while (!stack.isEmpty()) {
+            result.add(stack.pop());
+        }
+
+        return result;
     }
 
     public List<Station> getStationsOnLine() {

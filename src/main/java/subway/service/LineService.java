@@ -55,6 +55,7 @@ public class LineService {
 
     public List<SingleLineResponse> getAllLine() {
         Subway subway = new Subway(lineRepository.findAll());
+        subway.findShortestPath(new Station("가산"), new Station("구로디지털단지"));
 
         return subway.getAllLine()
                 .stream()
