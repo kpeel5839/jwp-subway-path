@@ -1,7 +1,5 @@
 package subway.service.domain;
 
-import org.springframework.beans.factory.ListableBeanFactoryExtensionsKt;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,7 +12,6 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 
 public class RouteMap {
 
@@ -29,14 +26,22 @@ public class RouteMap {
     }
 
     public void merge(RouteMap insertMap) {
-        map.putAll(insertMap.getMap());
+        Map<Station, List<Path>> insert = insertMap.getMap();
+        insert.forEach(this::putPaths);
     }
 
-    public void bfs(Station start, Station end) {
+    private void putPaths(Station stations, List<Path> additionalPath) {
+        map.computeIfAbsent(stations, ignored -> new ArrayList<>());
+        List<Path> paths = map.get(stations);
+        paths.addAll(additionalPath);
+    }
+
+    public ShortestPath getShortestPath(Station start, Station end) {
         PriorityQueue<Object[]> q = new PriorityQueue<>(Comparator.comparingInt(o -> (Integer) o[1]));
         Map<Station, Object[]> m = new HashMap<>();
         q.add(new Object[] {start, 0});
         m.put(start, new Object[] {null, 0});
+        map.forEach((key, value) -> m.put(key, new Object[]{null, Integer.MAX_VALUE}));
 
         while (!q.isEmpty()) {
             Object[] poll = q.poll();
@@ -59,18 +64,24 @@ public class RouteMap {
             }
         }
 
+        Integer totalDistance = (Integer) m.get(end)[1];
+
+        if (totalDistance == Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("최단 경로를 찾을 수 없습니다");
+        }
+
         List<Station> stations = pathReverse(end, start, m);
-        System.out.println(m.get(end)[1]);
-        System.out.println(stations);
+        return new ShortestPath((Integer) totalDistance, new Stations(stations), Fare.from(totalDistance));
+
     }
 
     public List<Station> pathReverse(Station start, Station end, Map<Station, Object[]> m) {
-        Stack<Station> stack = new Stack<>();
+        Deque<Station> deque = new LinkedList<>();
         List<Station> result = new ArrayList<>();
         Station c = start;
 
         while (true) {
-            stack.add(c);
+            deque.add(c);
 
             if (c.equals(end)) {
                 break;
@@ -79,8 +90,8 @@ public class RouteMap {
             c = (Station) m.get(c)[0];
         }
 
-        while (!stack.isEmpty()) {
-            result.add(stack.pop());
+        while (!deque.isEmpty()) {
+            result.add(deque.pollLast());
         }
 
         return result;

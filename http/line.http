@@ -134,3 +134,16 @@ Connection: keep-alive
     ]
   }
 ]
+
+### 최단 경로를 조회한다.
+
+GET http://localhost:8080/paths
+Content-Type: application/json
+Accept: application/json
+
+{
+  "departureStationId" : 1,
+  "arriveStationId" : 8
+}
+
+### Response
