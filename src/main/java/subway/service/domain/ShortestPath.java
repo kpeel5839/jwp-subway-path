@@ -4,28 +4,21 @@ import java.util.List;
 
 public class ShortestPath {
 
-    private final Integer distance;
-    private final Stations stationsInPath;
+    private ShortestPathInfo shortestPathInfo;
     private final Fare fare;
 
-    public ShortestPath(Integer distance,
-                        Stations stationsInPath,
+    public ShortestPath(ShortestPathInfo shortestPathInfo,
                         Fare fare) {
-        this.distance = distance;
-        this.stationsInPath = stationsInPath;
+        this.shortestPathInfo = shortestPathInfo;
         this.fare = fare;
     }
 
-    public Integer getDistance() {
-        return distance;
+    public ShortestPathInfo getShortestPathInfo() {
+        return shortestPathInfo;
     }
 
-    public List<Station> getStationsInPath() {
-        return stationsInPath.getStations();
-    }
-
-    public Integer getFare() {
-        return fare.getValue();
+    public Fare getFare() {
+        return fare;
     }
 
 }

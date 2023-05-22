@@ -1,5 +1,7 @@
 package subway.service.domain;
 
+import java.util.Set;
+
 public class Fare {
 
     private final Integer value;
@@ -12,9 +14,31 @@ public class Fare {
         return new Fare(calculate(totalDistance));
     }
 
+    public static Fare of(ShortestPathInfo shortestPathInfo,
+                          FarePolicies farePolicy,
+                          Age age) {
+        int calculate = calculate(shortestPathInfo.getTotalDistance())
+                + getAdditionalFare(shortestPathInfo.getUsedLines(), farePolicy);
+        return new Fare(acceptAgeDiscount(calculate, age));
+    }
+
+    private static Integer getAdditionalFare(Set<LineProperty> usedLines, FarePolicies farePolicy) {
+        int maxAdditionalFareByLine = 0;
+
+        for (LineProperty lineProperty : usedLines) {
+            maxAdditionalFareByLine = Math.max(maxAdditionalFareByLine, farePolicy.getAdditionalFareByLineProperty(lineProperty));
+        }
+
+        return maxAdditionalFareByLine;
+    }
+
     private static Integer calculate(Integer totalDistance) {
         return 1250 + chargeMoreForEveryFiveLargerThanTenAndSmallerThanFifty(totalDistance)
                 + chargeMoreForEveryEightLargerThanFifty(totalDistance);
+    }
+
+    private static Integer acceptAgeDiscount(Integer fare, Age age) {
+        return fare - (int) ((fare - age.getAmountDeducted()) * age.getDiscountRate());
     }
 
     private static int chargeMoreForEveryFiveLargerThanTenAndSmallerThanFifty(int totalDistance) {

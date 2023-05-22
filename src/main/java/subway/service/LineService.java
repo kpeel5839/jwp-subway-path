@@ -1,13 +1,16 @@
 package subway.service;
 
 import org.springframework.stereotype.Service;
+import subway.controller.dto.request.FarePolicyRequest;
 import subway.controller.dto.request.LineRequest;
+import subway.controller.dto.response.FarePolicyResponse;
 import subway.controller.dto.response.LineResponse;
 import subway.controller.dto.response.SingleLineResponse;
 import subway.exception.LineDuplicateException;
 import subway.repository.LineRepository;
 import subway.repository.StationRepository;
 import subway.service.domain.Distance;
+import subway.service.domain.FarePolicy;
 import subway.service.domain.Line;
 import subway.service.domain.LineProperty;
 import subway.service.domain.Section;
@@ -78,6 +81,13 @@ public class LineService {
 
     public void deleteLineById(Long id) {
         lineRepository.deleteById(id);
+    }
+
+    public FarePolicyResponse saveFarePolicy(FarePolicyRequest farePolicyRequest) {
+        Line line = lineRepository.findById(farePolicyRequest.getLineId());
+        FarePolicy farePolicy = new FarePolicy(line.getLineProperty(), farePolicyRequest.getAdditionalFare());
+        FarePolicy responseFarePolicy = lineRepository.saveFarePolicy(farePolicy);
+        return FarePolicyResponse.from(responseFarePolicy);
     }
 
 }
