@@ -2,8 +2,8 @@ package subway.service.domain;
 
 import subway.exception.LineNotFoundException;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Subway {
@@ -21,9 +21,11 @@ public class Subway {
     }
 
     public ShortestPath findShortestPath(Station start, Station end, FarePolicies farePolicies, Age age) {
-        RouteMapInLine routeMapInLine = new RouteMapInLine(new HashMap<>());
-        lines.forEach(line -> routeMapInLine.merge(line.getLineMap()));
-        return routeMapInLine.getShortestPath(start, end, farePolicies, age);
+        List<Map<Station, List<Path>>> routeMapInLines = lines.stream()
+                .map(line -> line.getLineMap().getMap())
+                .collect(Collectors.toList());
+        RouteMapInSubway routeMapInSubway = RouteMapInSubway.from(routeMapInLines);
+        return routeMapInSubway.getShortestPath(start, end, farePolicies, age);
     }
 
     public SingleLine getSingleLine(Long lineId) {
