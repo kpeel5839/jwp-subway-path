@@ -20,10 +20,10 @@ public class Subway {
                 .collect(Collectors.toList());
     }
 
-    public ShortestPath findShortestPath(Station start, Station end) {
+    public ShortestPath findShortestPath(Station start, Station end, FarePolicies farePolicies, Age age) {
         RouteMap routeMap = new RouteMap(new HashMap<>());
         lines.forEach(line -> routeMap.merge(line.getLineMap()));
-        return routeMap.getShortestPath(start, end);
+        return routeMap.getShortestPath(start, end, farePolicies, age);
     }
 
     public SingleLine getSingleLine(Long lineId) {

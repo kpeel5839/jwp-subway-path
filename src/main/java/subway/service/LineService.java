@@ -3,18 +3,23 @@ package subway.service;
 import org.springframework.stereotype.Service;
 import subway.controller.dto.request.FarePolicyRequest;
 import subway.controller.dto.request.LineRequest;
+import subway.controller.dto.request.PathRequest;
 import subway.controller.dto.response.FarePolicyResponse;
 import subway.controller.dto.response.LineResponse;
+import subway.controller.dto.response.ShortestPathResponse;
 import subway.controller.dto.response.SingleLineResponse;
 import subway.exception.LineDuplicateException;
 import subway.repository.LineRepository;
 import subway.repository.StationRepository;
+import subway.service.domain.Age;
 import subway.service.domain.Distance;
+import subway.service.domain.FarePolicies;
 import subway.service.domain.FarePolicy;
 import subway.service.domain.Line;
 import subway.service.domain.LineProperty;
 import subway.service.domain.Section;
 import subway.service.domain.Sections;
+import subway.service.domain.ShortestPath;
 import subway.service.domain.Station;
 import subway.service.domain.Subway;
 import subway.service.dto.LineDto;
@@ -58,7 +63,6 @@ public class LineService {
 
     public List<SingleLineResponse> getAllLine() {
         Subway subway = new Subway(lineRepository.findAll());
-        subway.findShortestPath(new Station("가산"), new Station("구로디지털단지"));
 
         return subway.getAllLine()
                 .stream()
@@ -70,6 +74,16 @@ public class LineService {
         Subway subway = new Subway(lineRepository.findAll());
 
         return SingleLineResponse.from(subway.getSingleLine(id));
+    }
+
+    public ShortestPathResponse findShortestPath(PathRequest pathRequest) {
+        Subway subway = new Subway(lineRepository.findAll());
+        FarePolicies farePolicies = new FarePolicies(lineRepository.findAllFarePolicy());
+        Station source = stationRepository.findByName(pathRequest.getSourceStationName());
+        Station destination = stationRepository.findByName(pathRequest.getDestinationStationName());
+        Age age = Age.from(pathRequest.getPassengerAge());
+        ShortestPath shortestPath = subway.findShortestPath(source, destination, farePolicies, age);
+        return ShortestPathResponse.of(source, destination, shortestPath);
     }
 
     public void updateLine(Long id, LineRequest lineUpdateRequest) {

@@ -27,5 +27,6 @@ create table if not exists fare_policy
 (
     id bigint auto_increment not null,
     line_id bigint not null,
-    additional_fare int not null,
+    additional_fare bigint not null,
+    primary key(id)
 );

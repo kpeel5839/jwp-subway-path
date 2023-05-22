@@ -6,7 +6,7 @@ public enum Age {
 
     CHILD(6, 13, 350, 0.5),
     YOUTH(13, 19, 350, 0.2),
-    ADULT(19, Integer.MAX_VALUE, 0, 0);
+    ADULT(19, Integer.MAX_VALUE, 0, 0.0);
 
     private final Integer ageLowerBoundInclusive;
     private final Integer ageUpperBoundExclusive;
