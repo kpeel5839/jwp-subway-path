@@ -6,7 +6,6 @@ import subway.service.domain.Direction;
 import subway.service.domain.Distance;
 import subway.service.domain.LineProperty;
 import subway.service.domain.Path;
-import subway.service.domain.RouteMap;
 import subway.service.domain.Section;
 import subway.service.domain.Sections;
 import subway.service.domain.Station;

@@ -53,7 +53,7 @@ public class Line {
                 && !sections.isContainsThisStation(secondStation);
     }
 
-    public RouteMap getLineMap() {
+    public RouteMapInLine getLineMap() {
         return sections.createMap(lineProperty);
     }
 

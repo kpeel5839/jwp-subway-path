@@ -21,9 +21,9 @@ public class Subway {
     }
 
     public ShortestPath findShortestPath(Station start, Station end, FarePolicies farePolicies, Age age) {
-        RouteMap routeMap = new RouteMap(new HashMap<>());
-        lines.forEach(line -> routeMap.merge(line.getLineMap()));
-        return routeMap.getShortestPath(start, end, farePolicies, age);
+        RouteMapInLine routeMapInLine = new RouteMapInLine(new HashMap<>());
+        lines.forEach(line -> routeMapInLine.merge(line.getLineMap()));
+        return routeMapInLine.getShortestPath(start, end, farePolicies, age);
     }
 
     public SingleLine getSingleLine(Long lineId) {
@@ -35,7 +35,7 @@ public class Subway {
     }
 
     private SingleLine getSingleLine(Line line) {
-        RouteMap lineMap = line.getLineMap();
+        RouteMapInLine lineMap = line.getLineMap();
         return SingleLine.of(line.getLineProperty(), lineMap.getStationsOnLine());
     }
 
